@@ -25,7 +25,7 @@ app.get('*', (req,res) =>{
   res.sendFile(path.join(__dirname+'/client/build/index.html'));
 });
 
-mongoose.connect('mongodb+srv://dseng905:ubho0d3I6lxe2SAa@cluster0-jnimq.mongodb.net/test?retryWrites=true&w=majority', { useNewUrlParser: true, useUnifiedTopology: true });
+mongoose.connect('process.env.MONGO_URI, { useNewUrlParser: true, useUnifiedTopology: true });
 
 
 app.use(function (req, res, next) {
