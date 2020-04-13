@@ -14,21 +14,14 @@ exports.postReply = async (req,res) => {
     //Add comment to thread
     const threadToReply = await thread.findById(threadId).exec();
     console.log(threadToReply)
+    threadToReply.bumped_on = new Date();
     threadToReply.replies.push({
       text : text,
       password : hash 
     })
     await threadToReply.save();
-    //Get id for reply and save document
-    // const repliesLength = threadToReply.replies.length;
-    // console.log(repliesLength);
-    // const replyId = threadToReply.replies[repliesLength-1]._id;
-    // console.log(replyId);
     
-    
-    //TODO: Redirect to board page
-    //res.json(threadToReply);
-    res.redirect('/');
+    res.send('success')
   }
   catch(err) {
     res.send("An error has occurred.")

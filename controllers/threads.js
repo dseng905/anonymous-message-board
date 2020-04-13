@@ -30,7 +30,8 @@ exports.postThread = async (req,res) => {
     //   text : text,
     //   password: hash,
     // })
-    res.redirect('/');
+    //res.redirect('/');
+    res.send("success");
   }
   catch(err) {
     return res.send("Thread could not submitted.");

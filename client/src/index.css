@@ -1,0 +1,142 @@
+body {
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+    sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+code {
+  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
+    monospace;
+}
+
+.title {
+  font-size: 20px;
+  font-weight: normal;
+}
+
+.board-list-container {
+  display: flex;
+  flex-direction: column;
+  position: fixed;
+  width: 15%;
+  height: 100vh;
+  padding: 10px 25px;
+  border-right: 1px solid black;
+  background-color: whitesmoke;
+}
+
+.board-list-title {
+  font-size: 20px;
+  font-weight: normal;
+  padding: 0;
+}
+
+.board-list li {
+  list-style-type: none;
+  margin: 0;
+  padding: 0;
+}
+
+.board-list li span {
+  position: relative;
+  margin-left: -2.1em;
+}
+
+.board-query-form input {
+  width : 80%;
+}
+
+.board-list-container .copyright {
+  margin-top: auto;
+  margin-bottom: 20px;
+  font-size: 12px;
+}
+
+.board {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 85%;
+  margin-left: 20%;
+}
+
+
+.board-textarea {
+  border: 1px solid black;
+  width: 500px;
+  height: 100px;
+  margin: 0 auto;
+}
+/* Thread Properties */
+.thread-container {
+  border: 1px solid black;
+  height: auto;
+  width: 500px;
+  margin: 10px auto;
+  padding: 20px 20px;
+  text-align: left;
+  overflow-wrap: break-word;
+  white-space: pre-wrap;
+}
+
+.thread-created-on {
+  font-size: 15px;
+  margin: 10px 0;
+  padding: 0;
+  line-height: 0;
+}
+
+.thread-bumped-on {
+  font-size: 12px;
+  font-style: italic;
+}
+
+.thread-textarea {
+  border: 1px solid black;
+  width : 500px;
+  height: 100px;
+  margin: 0;
+}
+
+.thread-controls {
+  margin: 0px 0;
+}
+.thread-delete-form {
+  display: inline;
+}
+
+.thread-delete-button, .thread-report-button {
+  margin: 0px 0px 0px 0px
+}
+
+
+.thread-create-reply-form {
+  margin: 0px 0;
+}
+
+.thread-create-reply-password, .thread-create-reply-submit {
+  margin: 5px 0;
+}
+
+/* Reply Properties */
+.reply-container {
+  background-color: whitesmoke;
+  border: 1px solid black;
+  margin: 10px 10px;
+  padding: 10px 10px;
+  white-space: pre-wrap;
+  overflow-wrap: break-word;
+}
+
+.reply-created-on {
+  margin: 3px 0;
+  padding: 0;
+  font-size: 12px;
+}
+
+.reply-delete-form {
+  display: inline;
+}

@@ -2,6 +2,10 @@ const express = require('express');
 const router = express.Router();
 const replies = require('../controllers/replies');
 const threads = require('../controllers/threads');
+const boards = require('../controllers/boards');
+
+router.route('/boards')
+  .get(boards.getBoardLists);
 
 router.route('/threads/:board')
   .post(threads.postThread) //post a thread
