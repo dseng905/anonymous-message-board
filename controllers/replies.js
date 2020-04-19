@@ -6,14 +6,14 @@ exports.postReply = async (req,res) => {
     const text = req.body.text;
     const deletePassword = req.body.delete_password;
     const threadId = req.body.thread_id;
-    //console.log(req.body);
-    //Encrypt password
+
+    //Encrypt password by hashing it with salt
     const saltRounds = 6;
     const hash = await bcrypt.hash(deletePassword,saltRounds);
 
     //Add comment to thread
     const threadToReply = await thread.findById(threadId).exec();
-    console.log(threadToReply)
+    //Update bumped on, the date of the last reply created
     threadToReply.bumped_on = new Date();
     threadToReply.replies.push({
       text : text,
@@ -34,7 +34,8 @@ exports.getReplies = async (req,res) => {
  try {
    const threadId = req.query.thread_id;
    const threadDoc = await thread.findById(threadId).exec();
-
+  
+    //Send a json object without the password and reported properties
    res.json({
      _id : threadDoc._id,
      text : threadDoc.text,
@@ -58,18 +59,24 @@ exports.deleteReply = async (req,res) => {
     const threadId = req.body.thread_id;
     const replyId = req.body.reply_id;
     const deletePassword = req.body.delete_password;
-    console.log(req.body)
+    
+    //Obtain the thread and find reply in the replies property
     const threadDoc = await thread.findById(threadId).exec();
     const reply = await threadDoc.replies.id(replyId);
+
+    //Compute the password stored with the input
     const passwordCorrect = await bcrypt.compare(deletePassword,reply.password);
-    console.log(passwordCorrect)
+
+    //If password is incorrect send an error message
     if(!passwordCorrect) {
       console.log('Incorrect password')
       res.send("incorrect password");
     }
+    //Otherwise, replace the reply text with a deleted message
     else {
       reply.text = "[deleted]";
       await threadDoc.save();
+      //This message is sent to the client
       res.send("success");
     }
   }
@@ -84,11 +91,14 @@ exports.reportReply = async (req,res) => {
   try {
     const threadId = req.body.thread_id;
     const replyId = req.body.reply_id;
-
+    
+    //Find the reply by find its thread with thread id and reply id given
     const threadDoc = await thread.findById(threadId).exec();
     const reply = await threadDoc.replies.id(replyId);
     reply.reported = true;
     threadDoc.save();
+
+    //Send 'success message to the client if reported property has been changed
     res.send('success');
   }
   catch(err) {

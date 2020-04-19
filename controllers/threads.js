@@ -1,13 +1,12 @@
-const mongoose = require('mongoose');
 const thread = require('../models/thread');
 const bcrypt = require('bcrypt');
 
 
 exports.postThread = async (req,res) => {
   try {
-    //console.log(req.body);
     const text = req.body.text;
     const deletePassword = req.body.delete_password;
+
     //If any queries are invalid
     if(!text || !deletePassword) {
       return res.send("Thread could not be submitted.");
@@ -17,20 +16,14 @@ exports.postThread = async (req,res) => {
     const saltRounds = 6;
     const hash = await bcrypt.hash(deletePassword,saltRounds);
 
+    //Added the new thread to the database
     const newThread = new thread({
       text : text,
       board: req.params.board,
       password: hash,
     });
-
     await newThread.save();
 
-    //TODO: Redirect to /b/{board}
-    // res.json({
-    //   text : text,
-    //   password: hash,
-    // })
-    //res.redirect('/');
     res.send("success");
   }
   catch(err) {
@@ -42,8 +35,10 @@ exports.postThread = async (req,res) => {
 
 exports.getThreads = async (req,res) => {
   try {
+    //Find the board the thread is in
     const boardThreads = await thread.find({board: req.params.board});
 
+    //Send an JSON object containing the then most recent thread
     const output = boardThreads.map(thr => ({
       _id : thr._id,
       text : thr.text,
@@ -73,12 +68,18 @@ exports.deleteThread = async (req,res) => {
   try {
     const thread_id = req.body.thread_id;
     const delete_password = req.body.delete_password;
+
+    //Find the thread
     const threadToDelete = await thread.findById(thread_id).exec();
+
+    //Check if the input is equal to the password stored
     const passwordCorrect = await bcrypt.compare(delete_password, threadToDelete.password);
 
+    //If password is incorrect, send error message
     if(!passwordCorrect) {
       res.send("Incorrect password");
     }
+    //Otherwise, delete thread from database and send success message to client
     else {
       await thread.deleteOne({_id : thread_id});
       res.send("success");
@@ -92,7 +93,8 @@ exports.deleteThread = async (req,res) => {
 
 exports.reportThread = async (req,res) => {
   try {
-    const threadToReport = await thread.findByIdAndUpdate(req.body.thread_id, {reported: true}).exec();
+    //Find thread and update reported property to true
+    await thread.findByIdAndUpdate(req.body.thread_id, {reported: true}).exec();
     res.send("success");
   }
   catch(err) {

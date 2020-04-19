@@ -2,7 +2,6 @@ const express = require('express');
 const app = express();
 const bodyParser = require('body-parser');
 const cors = require('cors');
-const mongo = require('mongodb');
 const mongoose = require('mongoose');
 const helmet = require('helmet');
 const methodOverride = require('method-override');
@@ -14,19 +13,15 @@ app.use(helmet());
 app.use(methodOverride('_method'));
 app.use(bodyParser.urlencoded({extended: true}));
 app.use(bodyParser.json());
-//app.use('/public', express.static(process.cwd() + '/public'));
-//app.get('/', (req, res) => res.sendFile(process.cwd() + '/views/index.html'));
-
-
 
 app.use(express.static(path.join(__dirname, 'client/build')));
+
 app.use('/api', apiRouter);
 app.get('*', (req,res) =>{
   res.sendFile(path.join(__dirname+'/client/build/index.html'));
 });
 
-mongoose.connect('process.env.MONGO_URI, { useNewUrlParser: true, useUnifiedTopology: true });
-
+mongoose.connect(process.env.MONGO_URI, { useNewUrlParser: true, useUnifiedTopology: true });
 
 app.use(function (req, res, next) {
   res.status(404).send('404 - Not Found!');

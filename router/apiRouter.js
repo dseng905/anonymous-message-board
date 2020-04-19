@@ -5,7 +5,7 @@ const threads = require('../controllers/threads');
 const boards = require('../controllers/boards');
 
 router.route('/boards')
-  .get(boards.getBoardLists);
+  .get(boards.getBoardLists); //Get a list of active boards
 
 router.route('/threads/:board')
   .post(threads.postThread) //post a thread
