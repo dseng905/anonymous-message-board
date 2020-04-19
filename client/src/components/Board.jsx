@@ -5,11 +5,35 @@ import {useParams} from 'react-router-dom';
 const Board = () => {
   const [threadList, setThreadList] = useState([]);
   const [threadCount, setThreadCount] = useState(0);
+
+  //States to indicate if any thread has been created or deleted
   const [isDeleted, setifThreadDeleted] = useState(false);
   const [threadCreated, setifThreadCreated] = useState(false);
+
+  //State variables to handle input text
   const [newThreadText, setNewThreadText] = useState("");
   const [newThreadPassword, setNewThreadPassword] = useState("");
+
+  //Set board name sent by React Router
   const {board} = useParams();
+
+  useEffect(() => {
+    async function fetchThreads() {
+      const boardURL = '/api/threads/' + board;
+      const res = await fetch(boardURL)
+      const data = await res.json()
+      
+      //Parse JSON response into array
+      const threads = [];
+      data.forEach(obj => threads.push(obj));
+
+      setThreadList(threads);
+      setThreadCount(threads.length);
+    }
+
+    fetchThreads(); 
+  }, [threadCount, board]); //Rerender if these state variables change
+  
 
   function adjustThreadCount(request) {
     if(request === "DELETE") {
@@ -22,10 +46,11 @@ const Board = () => {
   }
 
   async function createThread(e) {
-    e.preventDefault();
-    e.target.reset();
-    const serverURL = "";
-    const request = serverURL + "/api/threads/" + board;
+    e.preventDefault(); //Prevent redirect
+    e.target.reset(); //clear form upon submit
+
+    //Make server request to create thread in the board
+    const request = "/api/threads/" + board;
     const res = await fetch(request, {
       method : "POST",
       headers : {"Content-Type" : "application/json"},
@@ -34,8 +59,9 @@ const Board = () => {
         delete_password : newThreadPassword,
       })
     })
+
+    //If successfully created, update thread count
     const status = await res.text();
-    
     if(status === 'success') {
       adjustThreadCount("CREATE");
       setifThreadCreated(true);
@@ -43,6 +69,7 @@ const Board = () => {
 
   }
 
+  //Functions to handle input data from forms
   function handleNewThreadText(e) {
     setNewThreadText(e.target.value);
   }
@@ -51,33 +78,35 @@ const Board = () => {
     setNewThreadPassword(e.target.value);
   }
 
-  useEffect(() => {
-    async function fetchThreads() {
-      const serverURL = "";
-      const boardURL = serverURL + '/api/threads/' + board;
-      const res = await fetch(boardURL)
-      const data = await res.json()
-  
-      const threads = [];
-      data.forEach(obj => threads.push(obj));
-      setThreadList(threads);
-      setThreadCount(threads.length);
-    }
-
-    fetchThreads(); 
-  }, [threadCount, board]);
 
   return (
     <div className="board"> 
+      {/* Title */}
       <h1>{"/" + board}</h1>
+
+      {/* Display status updates on the top if a thread is deleted or created */}
       {isDeleted ? (<p>Thread has been deleted.</p>) : (<div></div>)}
       {threadCreated ? (<p>Thread has been created.</p>) : (<div></div>)}
+
+      {/* Form to create a new thread */}
       <form onSubmit={createThread}>
-        <textarea onChange={handleNewThreadText} className="board-textarea" placeholder="Create a thread..."></textarea><br/>
-        <input onChange={handleNewThreadPassword} type="password" placeholder="Enter a password..."></input>
-        <button type="submit">Submit</button>
+        <textarea 
+          onChange={handleNewThreadText} 
+          className="board-textarea" 
+          placeholder="Create a thread...">
+        </textarea><br/>
+        <input 
+          onChange={handleNewThreadPassword} 
+          type="password" 
+          placeholder="Enter a password...">
+        </input>
+        <button 
+          type="submit"
+        >Submit</button>
       </form>
-      { //Render threads in the board
+
+      {/* Render list of threads */}
+      { 
         threadList.map(thread => (
           <Thread
             board={board}
@@ -86,7 +115,7 @@ const Board = () => {
             createdOn={thread.created_on}
             bumpedOn={thread.bumped_on}
             key={thread._id}
-            threadCountAdjust={adjustThreadCount}
+            threadCountAdjust={adjustThreadCount} 
           />
         ))
       }

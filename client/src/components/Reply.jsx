@@ -5,10 +5,10 @@ const Reply = (props) => {
   const [isReported, setReported] = useState(false);
 
   async function deleteReply(e) {
-    e.preventDefault();
-    e.target.reset();
-    const serverURL = "";
-    const request = serverURL + "/api/replies/" + props.board + "?_method=DELETE";
+    e.preventDefault(); //Prevent redirect
+    e.target.reset(); //Reset form
+
+    const request = "/api/replies/" + props.board + "?_method=DELETE";
     const res = await fetch(request, {
       method : "POST",
       headers : {"Content-Type" : "application/json"},
@@ -20,6 +20,7 @@ const Reply = (props) => {
     })
     const status = await res.text();
 
+    //If successful, decrement reply count in the parent thread component
     if(status === 'success') {
       props.replyCountAdjust('DELETE')
     }
@@ -27,8 +28,7 @@ const Reply = (props) => {
   }
 
   async function reportReply(e) {
-    const serverURL = "";
-    const request = serverURL + "/api/replies/" + props.board + "?_method=PUT";
+    const request = "/api/replies/" + props.board + "?_method=PUT";
     const res = await fetch(request, {
       method : "POST",
       headers : {"Content-Type" : "application/json"},
@@ -41,19 +41,35 @@ const Reply = (props) => {
     setReported(true);
   }
 
+  // Input handler functions
   function handleDeletePassword(e) {
     setDeletePassword(e.target.value);
   }
 
   return (
     <div className="reply-container">
-      <p className="reply-created-on">{(new Date(props.createdOn)).toUTCString()}</p>
+      {/* Reply Info*/}
+      <p className="reply-created-on">
+        {(new Date(props.createdOn)).toUTCString()}
+      </p>
       <p>{props.text}</p>
+
+      {/* Form to delete reply */}
       <form className="reply-delete-form" onSubmit={deleteReply}>
-        <input onChange={handleDeletePassword} placeholder="Enter password to delete..." type="password" />
-        <button type="submit">Delete</button>
+        <input 
+          onChange={handleDeletePassword} 
+          placeholder="Enter password to delete..." 
+          type="password" 
+        />
+        <button 
+          type="submit"
+        >Delete</button>
       </form>
+
+      {/* Button to report reply */}
       <button onClick={reportReply}>Report</button>
+
+      {/* Display status if reply has been reported */}
       {isReported ? (<p>Reply has been reported!</p>) : (<div></div>)}
     </div>
   )
